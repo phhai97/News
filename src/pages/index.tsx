@@ -1,63 +1,89 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import React, { FC, useCallback, useMemo } from 'react';
+import { List, Space } from 'antd';
+import { MessageOutlined, StarOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+/** styles */
+import styles from '../styles/Home.module.css';
+import { News } from '../api';
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+/** interfaces  */
+import { INew } from '../@types/new';
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+/** helper */
+import ToSeoURL from '../utils/helper/seoURL';
 
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
-    </div>
-  )
+interface IProps {
+    data: INew[];
 }
+
+const IconText = ({ icon, text }) => (
+    <Space>
+        {React.createElement(icon)}
+        {text}
+    </Space>
+);
+
+const Home: FC<IProps> = ({ data }) => {
+    const handleRenderContent = useMemo(() => {
+        if (data)
+            return (
+                <List
+                    itemLayout="vertical"
+                    size="large"
+                    // pagination={{
+                    //     onChange: (page) => {
+                    //         console.log(page);
+                    //     },
+                    //     pageSize: 3,
+                    // }}
+                    dataSource={data}
+                    renderItem={(item: INew) => (
+                        <List.Item
+                            key={item.id}
+                            actions={[
+                                <IconText
+                                    icon={StarOutlined}
+                                    text={item.share_count}
+                                    key="list-vertical-star-o"
+                                />,
+                                <IconText
+                                    icon={MessageOutlined}
+                                    text={item.comment_count}
+                                    key="list-vertical-message"
+                                />,
+                            ]}
+                            extra={<img width={272} alt="logo" src={item?.thumb?.default} />}
+                        >
+                            <List.Item.Meta
+                                // avatar={<Avatar src={item.avatar} />}
+                                title={<Link href={`/${ToSeoURL(item.title)}`}>{item.title}</Link>}
+                                description={item.summary}
+                            />
+                            {/* {item.content} */}
+                        </List.Item>
+                    )}
+                />
+            );
+    }, [data]);
+    return <div className={styles.container}>{handleRenderContent}</div>;
+};
+
+export async function getStaticProps(context) {
+    const res = await News.getNews({
+        req: {
+            uid: '3000.SSZzejyD0jSbZUcknXb2n3pSw_hOLqpSVu3vyCT53ivfbRklWKCDXY2IkwACH4AFBfFofOj5Guika_UX.1',
+        },
+    });
+    if (!res) {
+        return {
+            notFound: true,
+        };
+    }
+
+    return {
+        props: { data: res?.err != 1 ? res.data : [] }, // will be passed to the page component as props
+    };
+}
+
+export default Home;

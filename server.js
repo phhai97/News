@@ -2,8 +2,8 @@ const express = require('express');
 const next = require('next');
 const routes = require('./src/routes');
 
-const port = parseInt(process.env.NEXT_PUBLIC_PORT, 10) || 4000;
-const dev = process.env.NEXT_PUBLIC_NODE_ENV !== 'production';
+const port = parseInt(process.env.PORT, 10) || 4000;
+const dev = process.env.ENVI !== 'PRODUCTION';
 const app = next({dir: `./src`, dev});
 const handle = routes.getRequestHandler(app);
 
@@ -19,6 +19,7 @@ const handle = routes.getRequestHandler(app);
 app.prepare().then(() => {
 	const server = express();
 	// server.use(authChecker);
+	console.log('port',process.env)
 	server.use(handle);
 	server.listen(port, (err) => {
 		if (err) throw err;
