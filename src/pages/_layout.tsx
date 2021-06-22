@@ -1,9 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
 import { Breadcrumb, Layout } from 'antd';
-
+import Link from 'next/link';
 /* ######### components ######## */
-import { Header, Footer } from '../components';
 
 const { Content } = Layout;
 
@@ -34,13 +33,13 @@ const MainLayout = ({ ...props }) => {
             <section className="container">
                 <Content style={{ padding: '0 50px' }}>
                     <Breadcrumb style={{ margin: '16px 0' }}>
-                        <Breadcrumb.Item>Home</Breadcrumb.Item>
-                        <Breadcrumb.Item>List</Breadcrumb.Item>
-                        <Breadcrumb.Item>App</Breadcrumb.Item>
+                        <Breadcrumb.Item>
+                            <Link href="/">Home</Link>
+                        </Breadcrumb.Item>
                     </Breadcrumb>
                     <div className="site-layout-content"> {props.children}</div>
                 </Content>
-                <Footer />
+                {/* <Footer /> */}
             </section>
         </div>
     );

@@ -29,14 +29,9 @@ const Home: FC<IProps> = ({ data }) => {
         if (data)
             return (
                 <List
+                    style={{ width: '100%', height: '100%' }}
                     itemLayout="vertical"
                     size="large"
-                    // pagination={{
-                    //     onChange: (page) => {
-                    //         console.log(page);
-                    //     },
-                    //     pageSize: 3,
-                    // }}
                     dataSource={data}
                     renderItem={(item: INew) => (
                         <List.Item
@@ -56,11 +51,9 @@ const Home: FC<IProps> = ({ data }) => {
                             extra={<img width={272} alt="logo" src={item?.thumb?.default} />}
                         >
                             <List.Item.Meta
-                                // avatar={<Avatar src={item.avatar} />}
                                 title={<Link href={`/${ToSeoURL(item.title)}`}>{item.title}</Link>}
                                 description={item.summary}
                             />
-                            {/* {item.content} */}
                         </List.Item>
                     )}
                 />
